@@ -1,11 +1,14 @@
 package BancoMaster.Bank.domain.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +16,10 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -26,10 +32,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "full_name", nullable = true, length = 150)
+    @Column(name = "full_name", length = 150)
     private String fullName;
 
-    @Column(nullable = true, length = 9)
+    @Column(length = 9)
     private String phone;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -50,36 +56,39 @@ public class User implements UserDetails {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+    public @NullMarked Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.userStatus== UserStatus.ADMIN){
+            return List.of(new SimpleGrantedAuthority("Role_User"), new SimpleGrantedAuthority("Role_Admin"));
+        }
+        return List.of(new SimpleGrantedAuthority("Role_User"));
     }
 
     @Override
-    public String getUsername() {
+    public @NullMarked  String getUsername() {
         return email;
     }
 
     @Override
-    public boolean isAccountNonExpired() {
+    public @NullMarked boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
-    public boolean isAccountNonLocked() {
+    public @NullMarked  boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
-    public boolean isCredentialsNonExpired() {
+    public @NullMarked boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
-    public boolean isEnabled() {
+    public @NullMarked boolean isEnabled() {
         return true;
     }
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,17 +26,17 @@ public class Pool {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(length = 255)
+    @Column()
     private String description;
 
     @Column(name = "current_balance", precision = 15, scale = 2, nullable = false)
     private BigDecimal currentBalance = BigDecimal.ZERO;
 
     @Column(name = "target_amount", precision = 15, scale = 2)
-    private BigDecimal targetAmount; // Optional
+    private BigDecimal targetAmount;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,6 +53,6 @@ public class Pool {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 }

@@ -33,6 +33,24 @@ public class Email {
             throw new RuntimeException("Falha ao enviar e-mail de confirmação", e);
         }
     }
+    @Async
+    public void sendCode(String toEmail, String userName , String code) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom("seu-email@gmail.com", "Banco Master");
+            helper.setTo(toEmail);
+            helper.setSubject("Código da sua conta ");
+
+            String htmlContent = buildEmailTemplate(userName, code);
+            helper.setText(htmlContent, true); // true ativa a renderização HTML
+
+            mailSender.send(message);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException("Falha ao enviar e-mail de confirmação", e);
+        }
+    }
 
     private String buildEmailTemplate(String userName, String code) {
         return """
@@ -112,5 +130,7 @@ public class Email {
             </body>
             </html>
             """.formatted(userName, code);
+
+
     }
 }

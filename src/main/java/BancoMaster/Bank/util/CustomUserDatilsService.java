@@ -1,6 +1,5 @@
-package BancoMaster.Bank.service;
+package BancoMaster.Bank.util;
 import BancoMaster.Bank.domain.repository.UserRepository;
-import jakarta.validation.constraints.NotNull;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +15,7 @@ public class CustomUserDatilsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(  @NonNull String email) throws UsernameNotFoundException {
+    public @NonNull UserDetails loadUserByUsername(  @NonNull String email) throws UsernameNotFoundException {
        return userRepository.findByEmail(email)
                .orElseThrow(()->new UsernameNotFoundException("user not found"));
     }

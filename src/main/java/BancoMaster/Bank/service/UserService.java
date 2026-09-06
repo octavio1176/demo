@@ -1,15 +1,19 @@
 package BancoMaster.Bank.service;
 import BancoMaster.Bank.domain.entity.User;
-import BancoMaster.Bank.domain.entity.UserStatus;
+import BancoMaster.Bank.domain.factory.UserFactory;
 import BancoMaster.Bank.domain.repository.UserRepository;
+import BancoMaster.Bank.dto.ForgotPassword.ForgotPasswordRequest;
+import BancoMaster.Bank.dto.ForgotPassword.ResetPasswordRequest;
 import BancoMaster.Bank.dto.signIn.LoginRequest;
 import BancoMaster.Bank.dto.signIn.LoginResponse;
 import BancoMaster.Bank.dto.signup.UserRequest;
 import BancoMaster.Bank.dto.signup.VerificationCode;
 import BancoMaster.Bank.dto.signup.signupResponse;
+import BancoMaster.Bank.exception.UserException.*;
 import BancoMaster.Bank.security.JwtService;
 import BancoMaster.Bank.util.Email;
 import BancoMaster.Bank.util.RandomString;
+import jakarta.mail.MessagingException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 @Service
 public class UserService {
     private final Email email;
@@ -31,8 +36,10 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final Map<String, UserRequest> pendingUsers = new ConcurrentHashMap<>();
     private final Map<String, VerificationCode> verificationCodes = new ConcurrentHashMap<>();
+    private final Map<String, VerificationCode> passwordResetCodes = new ConcurrentHashMap<>();
+    private final UserFactory userFactory;
 
-    public UserService(Email email, UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, UserDetailsService userDetailsService,  AuthenticationManager authenticationManager) {
+    private UserService(Email email, UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, UserDetailsService userDetailsService, AuthenticationManager authenticationManager, UserFactory userFactory) {
         this.email = email;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -40,13 +47,14 @@ public class UserService {
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
 
+        this.userFactory = userFactory;
     }
 
     public void register(@NonNull UserRequest userRequest){
 
 
         if (userRepository.findByEmail(userRequest.email()).isPresent()){
-            throw new RuntimeException("duplicated email");
+            throw new EmailAlreadyExistException();
         }
 
         pendingUsers.put(userRequest.email() , userRequest);
@@ -65,33 +73,22 @@ public class UserService {
 
         VerificationCode saved = verificationCodes.get(email);
         if (saved==null){
-            throw new RuntimeException("user not found");
+            throw new UsernotfoundException();
         }
 
         if (saved.isExpired()){
             verificationCodes.remove(email);
             pendingUsers.remove(email);
-            throw new RuntimeException("code expired ask for another one");
+            throw new CodeExpiredException();
         }
 
         if (!saved.code().equals(code)){
-            throw new RuntimeException("invalid code");
+            throw new InvalidCodeException();
         }
 
         UserRequest userRequest = pendingUsers.get(email);
 
-
-        User user = new User();
-
-        user.setFullName(userRequest.name());
-
-        user.setEmail(userRequest.name());
-
-        user.setPassword(passwordEncoder.encode(userRequest.password()));
-
-        user.setUserStatus(UserStatus.USER);
-
-        System.out.println("PHONE NUMBER IS " +userRequest.phoneNumber() );
+        User user =  userFactory.create(userRequest);
 
         userRepository.save(user);
 
@@ -125,6 +122,64 @@ public class UserService {
         userRepository.save(user);
 
         return new LoginResponse(token);
+    }
+
+    public void forgotPassword(@NonNull ForgotPasswordRequest request) throws MessagingException {
+
+       User user =userRepository.findByEmail(request.email())
+               .orElseThrow(UsernotfoundException::new);
+
+
+        LocalDateTime EXPIRATION_TIME=LocalDateTime.now().plusMinutes(10);
+
+        String code =RandomString.codeGenerator();
+
+        passwordResetCodes.put(request.email(), new VerificationCode(code , EXPIRATION_TIME));
+
+        email.sendCode(request.email(), user.getFullName(), code);
+
+    }
+
+    public void resetPassword(@NonNull ResetPasswordRequest request)
+    {
+
+        VerificationCode verificationCode = passwordResetCodes.get(request.email());
+
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(UsernotfoundException::new);
+
+
+        if (verificationCodes.isEmpty())
+        {
+        throw new CodenotFoundException();
+        }
+
+        if (verificationCode.isExpired())
+        {
+            throw new CodeExpiredException();
+        }
+        if (!verificationCode.code().equals(request.code()))
+        {
+            throw new InvalidCodeException();
+        }
+
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
+
+        String token = jwtService.generateToken(user);
+
+        user.setToken(token);
+
+        userRepository.save(user);
+
+        passwordResetCodes.remove(request.email());
+    }
+
+    public void logout(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(UsernotfoundException::new);
+
+        user.setToken(null);
+        userRepository.save(user);
     }
 
 }

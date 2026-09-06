@@ -37,9 +37,8 @@ public class SecurityConfig {
                     .authorizeHttpRequests
 
 
-                        (h-> h.requestMatchers("/API/register", "/API/login",
-                                        "/h2-console/**",
-                                        "/error", "/API/confirmation", "/API/criar", "/API/forgot-password","/API/reset-password")
+                        (h-> h.requestMatchers("/API/register", "/API/login"
+                                        , "/API/confirmation", "/API/criar", "/API/forgot-password","/API/reset-password")
 
 
                                 .permitAll().anyRequest().permitAll())
