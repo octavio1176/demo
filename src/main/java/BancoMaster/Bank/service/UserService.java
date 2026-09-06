@@ -10,6 +10,7 @@ import BancoMaster.Bank.dto.signup.signupResponse;
 import BancoMaster.Bank.security.JwtService;
 import BancoMaster.Bank.util.Email;
 import BancoMaster.Bank.util.RandomString;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,7 +42,7 @@ public class UserService {
 
     }
 
-    public void register(UserRequest userRequest){
+    public void register(@NonNull UserRequest userRequest){
 
 
         if (userRepository.findByEmail(userRequest.email()).isPresent()){
@@ -109,7 +110,7 @@ public class UserService {
         return new signupResponse(token);
     }
 
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(@NonNull LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
 
