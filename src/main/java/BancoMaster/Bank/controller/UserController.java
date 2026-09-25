@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid UserRequest userRequest) throws MessagingException {
         userService.register(userRequest);
-        return ResponseEntity.ok("Confirmation Code has been sent.");
+        return ResponseEntity.ok("Confirmation Code has been sent");
     }
 
     @PostMapping("/confirmation")
@@ -48,13 +48,13 @@ public class UserController {
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestBody @Valid ForgotPasswordRequest request) throws MessagingException {
         userService.forgotPassword(request);
-        return ResponseEntity.ok("Recovery code has been sent .");
+        return ResponseEntity.ok("Recovery code has been sent ");
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
         userService.resetPassword(request);
-        return ResponseEntity.ok("password updated .");
+        return ResponseEntity.ok("password updated");
     }
 
     @PostMapping("/logout")

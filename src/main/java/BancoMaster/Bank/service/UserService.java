@@ -142,6 +142,7 @@ public class UserService {
 
     public void resetPassword(@NonNull ResetPasswordRequest request)
     {
+        System.out.println( " nulooooo " + request.code());
 
         VerificationCode verificationCode = passwordResetCodes.get(request.email());
 
@@ -149,9 +150,11 @@ public class UserService {
                 .orElseThrow(UsernotfoundException::new);
 
 
+
+
         if (verificationCodes.isEmpty())
         {
-        throw new CodenotFoundException();
+        throw new RuntimeException("nulooooo");
         }
 
         if (verificationCode.isExpired())
@@ -178,8 +181,8 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UsernotfoundException::new);
 
-        user.setToken(null);
-        userRepository.save(user);
+        userRepository.delete(user);
+
     }
 
 }
