@@ -5,4 +5,5 @@ public record VerificationCode (String code , LocalDateTime expireAt) {
     public boolean isExpired(){
         return LocalDateTime.now().isAfter(expireAt);
     }
+
 }

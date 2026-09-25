@@ -135,6 +135,7 @@ public class UserService {
         String code =RandomString.codeGenerator();
 
         passwordResetCodes.put(request.email(), new VerificationCode(code , EXPIRATION_TIME));
+        System.out.println(request.email() + " CODIGOOOOO " +code);
 
         email.sendCode(request.email(), user.getFullName(), code);
 
@@ -144,23 +145,25 @@ public class UserService {
     {
         System.out.println( " nulooooo " + request.code());
 
+
+
         VerificationCode verificationCode = passwordResetCodes.get(request.email());
 
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(UsernotfoundException::new);
 
 
-
-
-        if (verificationCodes.isEmpty())
+        if (verificationCode==null)
         {
-        throw new RuntimeException("nulooooo");
+        throw new RuntimeException("nuloooo");
         }
 
         if (verificationCode.isExpired())
         {
             throw new CodeExpiredException();
         }
+        System.out.println( " cdigo " + request.code());
+
         if (!verificationCode.code().equals(request.code()))
         {
             throw new InvalidCodeException();

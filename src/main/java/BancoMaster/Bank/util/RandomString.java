@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 public class RandomString {
     public static String codeGenerator(){
         SecureRandom secureRandom= new SecureRandom();
-        int number = 1000 + secureRandom.nextInt(101,999);
+        int number = 10000 + secureRandom.nextInt(1001,9999);
         return String.valueOf(number);
     }
 
