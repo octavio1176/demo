@@ -1,7 +1,7 @@
 package BancoMaster.Bank.security;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import javax.crypto.SecretKey;
 import io.jsonwebtoken.io.Decoders;
@@ -21,7 +21,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails)
+    public String generateToken(@NonNull UserDetails userDetails)
     {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
@@ -31,6 +31,7 @@ public class JwtService {
                 .signWith(getSigningKey())
                 .compact();
     }
+
     public String extractUsername(String token)
     {
         return Jwts.parser()
@@ -51,7 +52,7 @@ public class JwtService {
                 .get("role",String.class);
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails)
+    public boolean isTokenValid(String token, @NonNull UserDetails userDetails)
     {
         String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);

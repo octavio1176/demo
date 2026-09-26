@@ -2,6 +2,7 @@ package BancoMaster.Bank.domain.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @AllArgsConstructor
 @Table(name = "accounts")
+@Builder
 public class Account {
 
     @Id
@@ -20,7 +22,7 @@ public class Account {
     private Long id;
 
     @Column(name = "account_number", unique = true, nullable = false, length = 20)
-    private String accountNumber;
+    private Long accountNumber;
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal balance;

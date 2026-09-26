@@ -8,8 +8,10 @@ public class RandomString {
         return String.valueOf(number);
     }
 
-    public static int accountNumberGenerator(){
+    public static Long accountNumberGenerator(){
         SecureRandom secureRandom = new SecureRandom();
-        return 1000 + secureRandom.nextInt(100,999);
+        return 4000 + secureRandom.nextLong(100,999);
     }
+
+
 }
