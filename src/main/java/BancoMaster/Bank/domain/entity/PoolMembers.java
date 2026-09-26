@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class PoolMembers {
     @Id
@@ -29,4 +30,9 @@ public class PoolMembers {
 
     @Enumerated(EnumType.STRING)
     private PoolMemberRole poolMemberRole;
+
+    @PrePersist
+    public void createdAt(){
+        joinedAt=LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+    }
 }
