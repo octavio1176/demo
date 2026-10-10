@@ -50,14 +50,13 @@ public class UserRegistrationService {
         }
 
 
-
         pendingUsers.put(userRequest.email() , userRequest);
 
         String code = RandomString.codeGenerator();
 
 
         verificationCodes.put(userRequest.email(), new VerificationCode(code));
-        System.out.println("CODE  " + code);
+
 
         email.sendConfirmationCode(userRequest.email() , userRequest.name(), code);
 

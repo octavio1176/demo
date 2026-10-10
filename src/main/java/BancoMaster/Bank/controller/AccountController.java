@@ -31,12 +31,13 @@ public class AccountController {
 
 
     @GetMapping("/list")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<List<Account>> listAccount(){
         return ResponseEntity.status(HttpStatus.OK).body(account1.listAccount());
     }
 
     @GetMapping("/findAccount")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Account> account(@RequestBody DeleteAccountRequest account){
         return ResponseEntity.ok().body(account1.Account(account));
     }

@@ -17,31 +17,31 @@ public class GlobalHandlerException {
     }
 
     @ExceptionHandler (CodeExpiredException.class)
-    public ResponseEntity<RestErrorMessage>  expired(CodeExpiredException e){
+    public ResponseEntity<RestErrorMessage>  CodeExpired(CodeExpiredException e){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 
     @ExceptionHandler (CodenotFoundException.class)
-    public ResponseEntity<RestErrorMessage>  codenotfound(CodenotFoundException e){
+    public ResponseEntity<RestErrorMessage>  codeNotfound(CodenotFoundException e){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 
     @ExceptionHandler (UsernotfoundException.class)
-    public ResponseEntity<RestErrorMessage>  usernotfound(UsernotfoundException e){
+    public ResponseEntity<RestErrorMessage>  userNotFound(UsernotfoundException e){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.NOT_FOUND,  e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 
     @ExceptionHandler (AccountNotFoundException.class)
-    public ResponseEntity<RestErrorMessage>  Account(AccountNotFoundException e){
+    public ResponseEntity<RestErrorMessage>  AccountNotFound(AccountNotFoundException e){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.NOT_FOUND,  e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 
     @ExceptionHandler (AccountLimitReachedException.class)
-    public ResponseEntity<RestErrorMessage>  AccountNotFound(AccountLimitReachedException e){
+    public ResponseEntity<RestErrorMessage>  AccountLimitReached(AccountLimitReachedException e){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST,  e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }

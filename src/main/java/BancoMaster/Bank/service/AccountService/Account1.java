@@ -10,9 +10,7 @@ import BancoMaster.Bank.exception.AccountException.AccountLimitReachedException;
 import BancoMaster.Bank.exception.AccountException.AccountNotFoundException;
 import BancoMaster.Bank.exception.UserException.UsernotfoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-
 
 @Service
 public class Account1 {
@@ -34,11 +32,15 @@ public class Account1 {
                 .orElseThrow(UsernotfoundException::new);
         List<Account> accounts = user.getAccounts();
 
-        if (accounts.size()>=3){
+        if (accounts.size()>=8){
             throw new AccountLimitReachedException();
         }
 
-        BancoMaster.Bank.domain.entity.Account account = accountFactory.createAccount(email, accountRequest);
+        if (accountRepository.findByName(accountRequest.name()).isPresent()){
+            throw new RuntimeException(" duplicated names ");
+        }
+
+        Account account = accountFactory.createAccount(email, accountRequest);
         accountRepository.save(account);
 
     }
@@ -62,10 +64,14 @@ public class Account1 {
 
     }
 
-
     public List<Account>  listAccount(){
         return accountRepository.findAll();
     }
+
+
+
+
+
 
 
 

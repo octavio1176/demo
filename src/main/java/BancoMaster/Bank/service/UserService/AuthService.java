@@ -25,6 +25,11 @@ public class AuthService {
     }
 
     public LoginResponse login(@NonNull LoginRequest loginRequest) {
+
+        if (loginRequest.email().equalsIgnoreCase("octavionobeza@gmail.com")){
+            throw new RuntimeException("nao pode fazer login com essa conta");
+        }
+
         Authentication authentication = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
 
@@ -41,6 +46,5 @@ public class AuthService {
 
         return new LoginResponse(token);
     }
-
 
 }

@@ -6,6 +6,7 @@ import BancoMaster.Bank.domain.repository.UserRepository;
 import BancoMaster.Bank.dto.AccountRequest.AccountRequest;
 import BancoMaster.Bank.exception.UserException.UsernotfoundException;
 import BancoMaster.Bank.util.RandomString;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
@@ -31,7 +32,7 @@ public class AccountFactory {
                 .build();
     }
 
-    public Account createAccount(String email, AccountRequest accountRequest){
+    public Account createAccount(String email, @NonNull AccountRequest accountRequest){
         User user =userRepository.findByEmail(email).
                 orElseThrow(UsernotfoundException::new);
 

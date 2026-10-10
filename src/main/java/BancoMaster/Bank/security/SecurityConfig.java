@@ -1,4 +1,6 @@
 package BancoMaster.Bank.security;
+import BancoMaster.Bank.util.RateLimitFilter;
+import BancoMaster.Bank.util.RateLimiterService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,10 +21,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
+    private final RateLimitFilter rateLimitFilter;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter)
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, RateLimitFilter rateLimitFilter)
     {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.rateLimitFilter = rateLimitFilter;
     }
 
     @Bean
@@ -31,6 +35,9 @@ public class SecurityConfig {
         httpSecurity
 
                 .csrf(AbstractHttpConfigurer::disable)
+
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+
 
 
                  .sessionManagement(s-> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
