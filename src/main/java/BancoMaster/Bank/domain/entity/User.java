@@ -49,7 +49,8 @@ public class User implements UserDetails {
     private List<Pool> pools;
 
 
-    @Column(length = 2000)
+
+    @Transient
     private String token;
 
     @Column(nullable = false)

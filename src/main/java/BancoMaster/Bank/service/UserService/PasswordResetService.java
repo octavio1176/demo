@@ -83,7 +83,6 @@ public class PasswordResetService {
 
         String token = jwtService.generateToken(user);
 
-        user.setToken(token);
 
         userRepository.save(user);
 

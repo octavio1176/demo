@@ -38,9 +38,7 @@ public class AuthService {
 
         assert user != null;
 
-        String token =jwtService.generateToken(user);
-
-        user.setToken(token);
+        String token = jwtService.generateToken(user);
 
         userRepository.save(user);
 

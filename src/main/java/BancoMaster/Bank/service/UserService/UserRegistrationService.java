@@ -1,4 +1,5 @@
 package BancoMaster.Bank.service.UserService;
+import BancoMaster.Bank.domain.entity.Account;
 import BancoMaster.Bank.domain.entity.User;
 import BancoMaster.Bank.domain.factory.UserFactory;
 import BancoMaster.Bank.domain.repository.UserRepository;
@@ -17,6 +18,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,17 +36,18 @@ public class UserRegistrationService {
     private final Account1 account1;
 
 
-    public UserRegistrationService(UserRepository userRepository, Email email, JwtService jwtService, UserFactory userFactory, UserDetailsService userDetailsService, Account1 account1) {
+
+    public UserRegistrationService(UserRepository userRepository, Email email, JwtService jwtService, UserFactory userFactory, UserDetailsService userDetailsService, Account1 account1 ) {
         this.userRepository = userRepository;
         this.email = email;
         this.jwtService = jwtService;
         this.userFactory = userFactory;
         this.userDetailsService = userDetailsService;
         this.account1 = account1;
+
     }
 
     public void register(@NonNull UserRequest userRequest){
-
 
         if (userRepository.findByEmail(userRequest.email()).isPresent()){
             throw new EmailAlreadyExistException();
@@ -52,11 +56,9 @@ public class UserRegistrationService {
 
         pendingUsers.put(userRequest.email() , userRequest);
 
-        String code = RandomString.codeGenerator();
-
+        String code= RandomString.codeGenerator();
 
         verificationCodes.put(userRequest.email(), new VerificationCode(code));
-
 
         email.sendConfirmationCode(userRequest.email() , userRequest.name(), code);
 
@@ -95,13 +97,12 @@ public class UserRegistrationService {
 
         String token = jwtService.generateToken(userDetails);
 
-        user.setToken(token);
-
         email.sendWelcomeEmail(userRequest.email(), user.getFullName());
 
         userRepository.save(user);
-        account1.createAccount(user.getEmail());
 
+
+        account1.createAccount(user.getEmail());
 
         return new signupResponse(token);
     }
