@@ -1,5 +1,4 @@
 package BancoMaster.Bank.service.UserService;
-import BancoMaster.Bank.domain.entity.Account;
 import BancoMaster.Bank.domain.entity.User;
 import BancoMaster.Bank.domain.factory.UserFactory;
 import BancoMaster.Bank.domain.repository.UserRepository;
@@ -19,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -88,7 +86,6 @@ public class UserRegistrationService {
 
         userRepository.save(user);
 
-
         verificationCodes.remove(email1);
 
         pendingUsers.remove(email1);
@@ -106,7 +103,4 @@ public class UserRegistrationService {
 
         return new signupResponse(token);
     }
-
-
-
 }

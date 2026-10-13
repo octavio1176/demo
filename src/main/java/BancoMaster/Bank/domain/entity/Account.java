@@ -2,6 +2,7 @@ package BancoMaster.Bank.domain.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class Account {
 
 
     @Column(nullable = false)
+    @Pattern(regexp = "^[A-Z]+( [A-Z]+)*$")
     private String name;
 
     @Enumerated(EnumType.STRING)

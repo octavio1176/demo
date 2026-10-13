@@ -6,9 +6,13 @@ import BancoMaster.Bank.domain.repository.AccountRepository;
 import BancoMaster.Bank.domain.repository.UserRepository;
 import BancoMaster.Bank.dto.AccountRequest.AccountRequest;
 import BancoMaster.Bank.dto.AccountRequest.DeleteAccountRequest;
+import BancoMaster.Bank.dto.AccountRequest.FindAccountByName;
 import BancoMaster.Bank.exception.AccountException.AccountLimitReachedException;
+import BancoMaster.Bank.exception.AccountException.AccountNameAlreadyExistException;
 import BancoMaster.Bank.exception.AccountException.AccountNotFoundException;
+import BancoMaster.Bank.exception.AccountException.BlankNameException;
 import BancoMaster.Bank.exception.UserException.UsernotfoundException;
+import BancoMaster.Bank.util.RandomString;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -30,21 +34,36 @@ public class Account1 {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UsernotfoundException::new);
+
+        if (accountRequest.name().isBlank()){
+            throw new BlankNameException();
+        }
+
+        Account account = accountFactory.createAccount(email, accountRequest);
+        long code=0;
         List<Account> accounts = user.getAccounts();
 
 
-
-        if (accounts.size()>=8){
+        if (accounts.size()>=200){
             throw new AccountLimitReachedException();
         }
 
         if (accountRepository.findByName(accountRequest.name()).isPresent()){
-            throw new RuntimeException(" duplicated names ");
+            throw new AccountNameAlreadyExistException();
         }
 
-        Account account = accountFactory.createAccount(email, accountRequest);
-        accountRepository.save(account);
+        if (accounts.contains(account.getAccountNumber()) || accounts.contains(code)){
 
+            do {
+
+              code = RandomString.accountNumberGenerator();
+
+            }while (code==account.getAccountNumber());
+
+            account.setAccountNumber(code);
+        }
+
+        accountRepository.save(account);
     }
 
     public void createAccount(String email){
@@ -66,16 +85,12 @@ public class Account1 {
 
     }
 
+    public Account findByName(FindAccountByName findAccountByName){
+        return accountRepository.findByName(findAccountByName.name())
+                .orElseThrow(UsernotfoundException::new);
+    }
+
     public List<Account>  listAccount(){
         return accountRepository.findAll();
     }
-
-
-
-
-
-
-
-
-
 }

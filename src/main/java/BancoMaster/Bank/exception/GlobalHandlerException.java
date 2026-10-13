@@ -1,6 +1,8 @@
 package BancoMaster.Bank.exception;
 import BancoMaster.Bank.exception.AccountException.AccountLimitReachedException;
+import BancoMaster.Bank.exception.AccountException.AccountNameAlreadyExistException;
 import BancoMaster.Bank.exception.AccountException.AccountNotFoundException;
+import BancoMaster.Bank.exception.AccountException.BlankNameException;
 import BancoMaster.Bank.exception.UserException.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,19 @@ public class GlobalHandlerException {
 
     @ExceptionHandler (AccountLimitReachedException.class)
     public ResponseEntity<RestErrorMessage>  AccountLimitReached(AccountLimitReachedException e){
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST,  e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+    }
+
+    @ExceptionHandler (BlankNameException.class)
+    public ResponseEntity<RestErrorMessage>  BlankName(BlankNameException e){
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST,  e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+    }
+
+
+    @ExceptionHandler (AccountNameAlreadyExistException.class)
+    public ResponseEntity<RestErrorMessage>  AccountNameExist(AccountNameAlreadyExistException e){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST,  e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }

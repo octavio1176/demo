@@ -2,6 +2,7 @@ package BancoMaster.Bank.controller;
 import BancoMaster.Bank.domain.entity.Account;
 import BancoMaster.Bank.dto.AccountRequest.AccountRequest;
 import BancoMaster.Bank.dto.AccountRequest.DeleteAccountRequest;
+import BancoMaster.Bank.dto.AccountRequest.FindAccountByName;
 import BancoMaster.Bank.service.AccountService.Account1;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,5 +48,12 @@ public class AccountController {
     public ResponseEntity<Void> delete( @RequestBody DeleteAccountRequest deleteAccountRequest){
         account1.deleteAccount(deleteAccountRequest);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/findByName")
+    public ResponseEntity<Account> findByName(@RequestBody FindAccountByName findAccountByName){
+
+        return ResponseEntity.status(HttpStatus.OK).body(account1.findByName(findAccountByName));
+
     }
 }

@@ -1,6 +1,7 @@
 package BancoMaster.Bank.domain.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,7 @@ public class User implements UserDetails {
     private String password;
 
     @Column(name = "full_name", length = 150)
+    @Pattern(regexp = "^[A-Z]+( [A-Z]+)*$")
     private String fullName;
 
     @Column(length = 9)
