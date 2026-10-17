@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RequestMapping("Account")
@@ -17,7 +16,6 @@ import java.util.List;
 public class AccountController {
 
     private  final Account1 account1;
-
 
     public AccountController(Account1 account1) {
         this.account1 = account1;
@@ -32,15 +30,22 @@ public class AccountController {
 
 
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<Account>> listAccount(){
         return ResponseEntity.status(HttpStatus.OK).body(account1.listAccount());
     }
 
-    @GetMapping("/findAccount")
+    @GetMapping("listMyAccounts")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Account> account(@RequestBody DeleteAccountRequest account){
-        return ResponseEntity.ok().body(account1.Account(account));
+    public ResponseEntity<List<Account>> listMyAccounts(Authentication authentication){
+        String email = authentication.getName();
+        return ResponseEntity.status(HttpStatus.OK).body(account1.listMyAccount(email));
+    }
+
+    @GetMapping("/findAccount")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Account> account(@PathVariable Long  AccountNumber){
+        return ResponseEntity.ok().body(account1.Account(AccountNumber));
     }
 
     @DeleteMapping("/delete")
@@ -51,9 +56,15 @@ public class AccountController {
     }
 
     @GetMapping("/findByName")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Account> findByName(@RequestBody FindAccountByName findAccountByName){
 
         return ResponseEntity.status(HttpStatus.OK).body(account1.findByName(findAccountByName));
 
+    }
+
+    @GetMapping("/elemento")
+    public ResponseEntity<Boolean> elementos(){
+        return ResponseEntity.status(HttpStatus.OK).body(account1.elementos());
     }
 }

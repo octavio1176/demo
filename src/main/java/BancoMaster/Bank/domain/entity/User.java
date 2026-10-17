@@ -34,7 +34,6 @@ public class User implements UserDetails {
     private String password;
 
     @Column(name = "full_name", length = 150)
-    @Pattern(regexp = "^[A-Z]+( [A-Z]+)*$")
     private String fullName;
 
     @Column(length = 9)
