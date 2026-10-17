@@ -58,9 +58,7 @@ public class Account1 {
             throw new AccountLimitReachedException();
         }
 
-        if (accountRepository.findByName(accountRequest.name()).isPresent()){
-            throw new AccountNameAlreadyExistException();
-        }
+
 
         Long  code = account.getAccountNumber();
 
@@ -113,8 +111,7 @@ public class Account1 {
     public boolean elementos(){
         List<Account> accounts = accountRepository.findAll();
 
-        List<Long> list = accounts.stream().map(Account::getAccountNumber)
-                .toList();
+        List<Long> list = accounts.stream().map(Account::getAccountNumber).toList();
 
         Set<Long> set = new HashSet<>(list);
 

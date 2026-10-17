@@ -4,6 +4,7 @@ import BancoMaster.Bank.dto.AccountRequest.AccountRequest;
 import BancoMaster.Bank.dto.AccountRequest.DeleteAccountRequest;
 import BancoMaster.Bank.dto.AccountRequest.FindAccountByName;
 import BancoMaster.Bank.service.AccountService.Account1;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ public class AccountController {
     }
 
     @PostMapping("/creatAccount")
-    public ResponseEntity<Void> creat( Authentication authentication, @RequestBody AccountRequest accountRequest) {
+    public ResponseEntity<Void> creat(@NonNull Authentication authentication, @RequestBody AccountRequest accountRequest) {
         String email = authentication.getName();
         account1.createAccount(email, accountRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -37,15 +38,15 @@ public class AccountController {
 
     @GetMapping("listMyAccounts")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<List<Account>> listMyAccounts(Authentication authentication){
+    public ResponseEntity<List<Account>> listMyAccounts(@NonNull Authentication authentication){
         String email = authentication.getName();
         return ResponseEntity.status(HttpStatus.OK).body(account1.listMyAccount(email));
     }
 
     @GetMapping("/findAccount")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Account> account(@PathVariable Long  AccountNumber){
-        return ResponseEntity.ok().body(account1.Account(AccountNumber));
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<Account> account(@RequestBody @NonNull DeleteAccountRequest deleteAccountRequest){
+        return ResponseEntity.ok().body(account1.Account(deleteAccountRequest.accountNumber()));
     }
 
     @DeleteMapping("/delete")
@@ -60,7 +61,6 @@ public class AccountController {
     public ResponseEntity<Account> findByName(@RequestBody FindAccountByName findAccountByName){
 
         return ResponseEntity.status(HttpStatus.OK).body(account1.findByName(findAccountByName));
-
     }
 
     @GetMapping("/elemento")
